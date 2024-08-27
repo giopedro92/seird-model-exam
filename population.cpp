@@ -107,9 +107,14 @@ void Population::print(std::vector<State> const& solution) {
   }
   int day = 1;
   for (State state : solution) {
-    file << day << " " << std::round(state.S) << " " << std::round(state.E)
-         << " " << N - std::round(state.S) - std::round(state.R) << " "
-         << std::round(state.R) << '\n';
+    file << 
+    day 
+    << " " << std::round(state.S) 
+    << " " << std::round(state.E) 
+    << " " << std::round(state.I) 
+    << " " << std::round(state.R) 
+    << " " << std::round(state.D) 
+    << '\n';
     day++;
   };
   file.close();
