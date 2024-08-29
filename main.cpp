@@ -19,7 +19,7 @@ struct Parameters {
 
 // tale funzione ha come argomento un numero double che si vuole controllare non
 // sia decimale. Viene restituito un valore booleano.
-bool isNotInteger(double n) { return n - (int)n != 0; };
+bool isNotInteger(double n) { return n - static_cast<int>(n) != 0; }
 Parameters readVariablesFromFile(const std::string& filename);
 
 int main() {
@@ -27,7 +27,7 @@ int main() {
   Parameters pars;
 
   enum inputWay {  // unscoped enumeration
-    FILE = 1,
+    FILE_INPUT = 1,
     INTERACTIVE
   };
 
@@ -39,7 +39,7 @@ int main() {
   std::cin >> choice;
 
   switch (choice) {
-    case FILE: {
+    case FILE_INPUT: {
       std::string configFile = "ConfigFile.txt";
       pars = readVariablesFromFile(configFile);
       break;
@@ -83,8 +83,8 @@ int main() {
                      "maggiore di zero."
                   << '\n';
         std::cin >> pars.t;
-        pars.s = 1 / pars.t;
       };
+      pars.s = (1 / pars.t);
 
       do {
         std::cout << "\u03B3 è l'inverso del tempo medio di risoluzione "
@@ -101,8 +101,8 @@ int main() {
                   << "Inserire il valore di \u03BC (valori accettati tra 0 e "
                      "1 inclusi)."
                   << '\n';
-        std::cin >> pars.g;
-      } while (pars.g < 0. || pars.g > 1.);
+        std::cin >> pars.m;
+      } while (pars.m < 0. || pars.m > 1.);
 
       break;
     }
@@ -120,7 +120,7 @@ int main() {
 
   std::vector<State> solution = result.evolve(initial_state);
 
-  int threshold = result.peak(solution);
+  long int threshold = result.peak(solution);
   std::ofstream file1;
   file1.open("threshold.dat");
   file1 << threshold;
@@ -161,8 +161,8 @@ Parameters readVariablesFromFile(const std::string& filename) {
 
   input_data.b = values[0];
   input_data.g = values[1];
-  input_data.N = values[2];
-  input_data.T = values[3];
+  input_data.N = static_cast<int>(values[2]);
+  input_data.T = static_cast<int>(values[3]);
   input_data.i = values[4];
   input_data.t = values[5];
   input_data.m = values[6];

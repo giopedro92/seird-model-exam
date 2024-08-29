@@ -17,8 +17,8 @@ class Population {
   double g;  // inverso del periodo medio di infezione
   double s;  // inverso del tempo di incubazione
   double m;  // mortality rate
-  int N;
-  int T;
+  double N;
+  double T;
 
  public:
   Population(double beta, double gamma, double sigma, double mu, double n,
@@ -31,7 +31,7 @@ class Population {
     T = time;
   }
 
-  void approximation(State&, int);
+  void approximation(State&, double);
 
   void next(State& initial_state);
 
