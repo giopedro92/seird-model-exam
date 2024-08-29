@@ -1,7 +1,7 @@
-0.6 #beta
-0.3 #gamma
-10000   #popolazione totale
-1000    #durata dell'epidemia
-35  #numero di infetti all'inizio
-3   #tempo di incubazione
-0.3 #tasso di mortalità
+0.6   # beta, probabilità di contagio                                (tra 0 e 1 inclusi)
+0.3   # gamma, inverso del tempo medio di risoluzione dell'infezione (tra 0 e 1 inclusi)
+10000 # dimensione della popolazione                                 (intero positivo)
+1000  # durata dell'epidemia in giorni                               (intero positivo)
+35    # numero iniziale di infetti                                   (intero positivo)
+3     # tempo di incubazione in giorni                               (intero positivo)
+0.3   # mu, tasso di mortalità                                       (tra 0 e 1 inclusi)
