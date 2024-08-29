@@ -5,6 +5,7 @@
 
 #include "population.hpp"
 
+// Abbiamo creato questa struct per raccogliere i dati in input
 struct Parameters {
   double b;
   double g;
@@ -16,17 +17,14 @@ struct Parameters {
   double s;
 };
 
+// tale funzione ha come argomento un numero double che si vuole controllare non
+// sia decimale. Viene restituito un valore booleano.
 bool isNotInteger(double n) { return n - (int)n != 0; };
 Parameters readVariablesFromFile(const std::string& filename);
 
 int main() {
   State initial_state{};
   Parameters pars;
-  /*double b{};
-  double g{};
-  double N{};   poiché provengono da cin, a priori sono double,
-  double T{};   una verifica successiva li restringe a int
-  double i{};*/
 
   enum inputWay {  // unscoped enumeration
     FILE = 1,
@@ -39,7 +37,6 @@ int main() {
   std::cout << "Scegli un'opzione: ";
   int choice;
   std::cin >> choice;
-  // std::cin.ignore();
 
   switch (choice) {
     case FILE: {
@@ -115,40 +112,53 @@ int main() {
 
   initial_state.S = pars.N - pars.i;
   initial_state.E = 0;
-  initial_state.D = 0;
   initial_state.I = pars.i;
+  initial_state.R = 0;
+  initial_state.D = 0;
 
   Population result(pars.b, pars.g, pars.s, pars.m, pars.N, pars.T);
 
   std::vector<State> solution = result.evolve(initial_state);
+
   int threshold = result.peak(solution);
   std::ofstream file1;
   file1.open("threshold.dat");
   file1 << threshold;
   file1.close();
+
   std::ofstream file2;
   file2.open("population.dat");
   file2 << pars.N;
   file2.close();
+
   result.print(solution);
 }
 
+// Tale funzione ha come argomento una stringa che corrisponde al nome del file
+// che si vuole leggere. Restituisce un elemento di Parameters attraverso il
+// quale è possibile definire result.
 Parameters readVariablesFromFile(const std::string& filename) {
   std::ifstream file(filename);
-
   if (!file.is_open()) {
     throw std::runtime_error("Errore nell'apertura del file: " + filename);
   }
 
   std::vector<double> values;
 
-  double value;
-  while (file >> value) {
+  std::string line;
+
+  while (std::getline(file, line, '#')) {
+    if (line.empty()) break;
+    std::cout << line << '\n';
+    double value = std::stod(line);
     values.push_back(value);
+    file.ignore(10000, '\n');
   }
 
   file.close();
+
   Parameters input_data{};
+
   input_data.b = values[0];
   input_data.g = values[1];
   input_data.N = values[2];
@@ -157,5 +167,6 @@ Parameters readVariablesFromFile(const std::string& filename) {
   input_data.t = values[5];
   input_data.m = values[6];
   input_data.s = 1 / input_data.t;
+
   return input_data;
 }

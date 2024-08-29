@@ -12,39 +12,64 @@
 // il giorno successivo
 void Population::next(State& initial_state) {
   double Sf = initial_state.S - (b * initial_state.S * initial_state.I) / N;
-
-  // double Sf = std::round(Sf_decimale);
-
   double Rf = initial_state.R + g * initial_state.I * (1 - m);
-
-  // double Rf = std::round(Rf_decimale);
-
   double Ef =
       initial_state.E * (1 - s) + (b * (initial_state.S * initial_state.I) / N);
-
-  // double Ef = std::round(Ef_decimale);
   double Df = initial_state.D + (m * g * initial_state.I);
-
-  // double Df = std::round(Df_decimale);
-
   double If = N - Sf - Rf - Ef - Df;
 
   initial_state = {Sf, Ef, If, Rf, Df};
 };
 
-// Questa funzione riempie un vettore contenente lo stato dell'epidemia di
+// funzione che definisce il metodo di approssimazione
+void Population::approximation(State& initial_state, int N) {
+  double s, e, i, r, d;
+  s = initial_state.S;
+  e = initial_state.E;
+  i = initial_state.I;
+  r = initial_state.R;
+  d = initial_state.D;
+
+  std::vector<double> sired = {s, e, i, r, d};
+  unsigned int index = 0;
+  double max_rounding = -1.;
+
+  for (int j = 0; j < 5; j++) {
+    double value = std::abs(sired[j] - std::round(sired[j]));
+    if (value > max_rounding) {
+      max_rounding = value;
+      index = j;
+    }
+  }
+
+  for (unsigned int k = 0; k < sired.size(); ++k) {
+    if (k != index) {
+      sired[k] = std::round(sired[k]);
+    }
+  }
+  sired[index] = N - sired[(index + 1) % 5] - sired[(index + 2) % 5] -
+                 sired[(index + 3) % 5] - sired[(index + 4) % 5];
+
+  assert(sired[0] + sired[1] + sired[2] + sired[3] + sired[4] == N);
+
+  initial_state.S = sired[0];
+  initial_state.E = sired[1];
+  initial_state.I = sired[2];
+  initial_state.R = sired[3];
+  initial_state.D = sired[4];
+}
+
+// Questa funzione restituisce un vettore contenente lo stato dell'epidemia di
 // giorno in giorno
 std::vector<State> Population::evolve(State& initial_state) {
   std::vector<State> dati{initial_state};
-  // int i;
-  // int e;
   for (int c = 2; c <= T && (initial_state.I != 0 || initial_state.E != 0);
        c++) {
     next(initial_state);
-    dati.push_back(initial_state);
-    // e = initial_state.E;
-    // i = N - initial_state.S - initial_state.R - initial_state.D -
-    // initial_state.E;
+    State copy_state = initial_state; //abbiamo creato un copy state in modo tale che l'iterazione successiva vengo comunque calcolata con i numeri decimali
+    this->approximation(copy_state, N);
+    dati.push_back(copy_state);
+    if (copy_state.I == 0 && copy_state.E == 0) break;
   };
   int k = dati.size();
   assert(k <= T &&
@@ -55,9 +80,10 @@ std::vector<State> Population::evolve(State& initial_state) {
 
 // Questa funzione calcola dopo quanti giorni l'epidemia inizia a decrescere
 int Population::peak(std::vector<State> const& dati) {
-  auto It = std::find_if(dati.begin(), dati.end(), [this](const State& state) {
-    return (state.S * this->b) / (this->N * (this->g + this->m)) < 1;
-  });
+  auto It = std::find_if(dati.begin() + (1 / s), dati.end(),
+                         [this](const State& state) {
+                           return (state.E * this->s) / (state.I * this->g) < 1; //condizione affinchè l'epidemia inizi ad essere in contrazione
+                         });
   if (It != dati.end()) {
     int thr = std::distance(dati.begin(), It);
     if (thr == 0) {
@@ -79,26 +105,23 @@ int Population::peak(std::vector<State> const& dati) {
 void Population::print(std::vector<State> const& solution) {
   int c = solution.size();  //
   double s{}, e{}, i{}, r{}, d{};
-  std::cout << "giorno\tsuscettibili\tesposti\tinfetti\tguariti\tmorti\n";
+  std::cout << "giorno suscettibili esposti infetti guariti morti\n";
   for (int j = 0; j < c; j++) {
-    s = solution[j].S;  // c++ arrotonda troncando le cifre
-                        // decimali.
+    s = solution[j].S;
     e = solution[j].E;
-    r = solution[j].R;  // serve una funzione per farlo arrotondare normalmente
-    i = solution[j].I;  // N - s - r - e - d;
-    d = solution[j].D;  // N - s - r - e - i;
-    // assert(s + i + r + e + d == N);
+    r = solution[j].R;  
+    i = solution[j].I;  
+    d = solution[j].D;  
 
-    std::cout << j << "   " << s << "   " << e << "   " << i << "   " << r
-              << "   " << d << '\n';
+    std::cout << j << "\t" << s << "\t" << e << "\t" << i << "\t" << r << "\t"
+              << d << '\n';
   };
-  /*if (i == 0 && c == 2) {
-    std::cout << "L'epidemia non è avvenuta" << '\n';
-  } else if (i == 0 && e == 0) {*/
-  std::cout << "L'epidemia si è risolta in " << c << " giorni." << '\n';
-  /*} else {
+
+  if (i == 0 && e == 0) {
+    std::cout << "L'epidemia si è risolta in " << c << " giorni." << '\n';
+  } else {
     std::cout << "L'epidemia è ancora in corso." << '\n';
-  };*/
+  };
 
   std::ofstream file;
   file.open("data.dat");
@@ -107,14 +130,8 @@ void Population::print(std::vector<State> const& solution) {
   }
   int day = 1;
   for (State state : solution) {
-    file << 
-    day 
-    << " " << std::round(state.S) 
-    << " " << std::round(state.E) 
-    << " " << std::round(state.I) 
-    << " " << std::round(state.R) 
-    << " " << std::round(state.D) 
-    << '\n';
+    file << day << " " << state.S << " " << state.E << " " << state.I << " "
+         << state.R << " " << state.D << '\n';
     day++;
   };
   file.close();

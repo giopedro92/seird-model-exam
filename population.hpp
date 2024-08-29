@@ -30,6 +30,9 @@ class Population {
     N = n;
     T = time;
   }
+
+  void approximation(State&, int);
+
   void next(State& initial_state);
 
   std::vector<State> evolve(State& initial_state);

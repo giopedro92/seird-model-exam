@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
-#include "epidemia.hpp"
+#include "population.hpp"
 
 // Verifica delle condizioni beta e gamma
 TEST_CASE("beta = 0") { //non ci si infetta
