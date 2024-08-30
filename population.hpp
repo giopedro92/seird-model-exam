@@ -31,7 +31,7 @@ class Population {
     T = time;
   }
 
-  void approximation(State&, double);
+  void approximation(State& initial_state, double number);
 
   void next(State& initial_state);
 
