@@ -1,5 +1,5 @@
-#ifndef EPIDEMIA_HPP
-#define EPIDEMIA_HPP
+#ifndef POPULATION_HPP
+#define POPULATION_HPP
 
 #include <string>
 #include <vector>
@@ -17,8 +17,8 @@ class Population {
   double g;  // inverso del periodo medio di infezione
   double s;  // inverso del tempo di incubazione
   double m;  // mortality rate
-  double N;
-  double T;
+  double N;  // popolazione
+  double T;  // tempo di test in giorni
 
  public:
   Population(double beta, double gamma, double sigma, double mu, double n,
@@ -42,4 +42,4 @@ class Population {
   void print(std::vector<State> const& solution);
 };
 
-#endif  // EPIDEMIA_HPP
+#endif  // POPULATION_HPP

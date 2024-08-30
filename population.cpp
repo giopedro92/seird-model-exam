@@ -68,7 +68,7 @@ std::vector<State> Population::evolve(State& initial_state) {
     next(initial_state);
     State copy_state =
         initial_state;  // abbiamo creato un copy state in modo tale che
-                        // l'iterazione successiva vengo comunque calcolata con
+                        // l'iterazione successiva venga comunque calcolata con
                         // i numeri decimali
     this->approximation(copy_state, N);
     dati.push_back(copy_state);

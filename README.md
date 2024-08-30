@@ -4,7 +4,7 @@
 
 Le *translation units* coinvolte in questo progetto sono `main.cpp`, `population.cpp`, `population.hpp`, `test.cpp` e `graph.cpp` (quest'ultimo da compilarsi col framework ROOT CERN).
 
-La compilazione ed esecuzione del programma avviene da terminale scrivendo i seguenti comandi:
+La compilazione ed esecuzione del programma avviene **da terminale** scrivendo i seguenti comandi:
 
 ```bash
 g++ -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined main.cpp population.cpp
@@ -23,9 +23,33 @@ g++ -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-
 ```bash
 ./test.out
 ```
+È possibile anche compilare ed eseguire con **`CMake`** coi comandi:
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=Debug -S . -Bbuild
+```
+
+```bash
+cmake --build build
+```
+
+```bash
+cmake --build build --target test
+```
+
+```bash
+build/population
+```
+
+Per eseguire i test occorre scrivere:
 
 
-Se nel proprio computer sono installati il framework ROOT CERN e un server grafico è possibile eseguire i seguenti comandi per ottenere la rappresentazione grafica dell'andamento dell'epidemia:
+```bash
+build/population.t
+```
+
+
+Se nel proprio computer sono installati il framework **ROOT CERN** e un server grafico è possibile eseguire i seguenti comandi per ottenere la rappresentazione grafica dell'andamento dell'epidemia:
 
 ```bash
 root .

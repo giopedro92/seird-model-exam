@@ -6,7 +6,7 @@ void setStyle() {
 
 void graph() {
   // CANVAS
-  TCanvas *c = new TCanvas("c", "SIR", 700, 500);
+  TCanvas *c = new TCanvas("c", "SEIRD", 700, 500);
   TMultiGraph *mg = new TMultiGraph();
 
   // GRAPH
